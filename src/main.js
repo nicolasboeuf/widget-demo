@@ -4,6 +4,7 @@ import store from './store'
 import HelloWorld from './components/HelloWorld'
 import GoodBye from './components/GoodBye'
 import Map from './components/Map'
+import DataBox from './components/DataBox'
 
 Vue.config.productionTip = false
 
@@ -18,3 +19,4 @@ GoodBye.store = store
 Vue.customElement('hello-world', HelloWorld)
 Vue.customElement('good-bye', GoodBye)
 Vue.customElement('da-map', Map)
+Vue.customElement('data-box', DataBox)

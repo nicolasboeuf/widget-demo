@@ -5,11 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    count: 0
+    count: 0,
+    structure:{}
   },
   mutations: {
     increment (state) {
       state.count++
+    },
+    initStructure (state,data) {
+      state.structure = data
     }
   }
 })

@@ -1,41 +1,49 @@
 <template>
   <div class="databox">
-    <h1 class="rf-h2">{{ovqStructure['nom_ovq']}}</h1>
+    <code><b>logs</b></code><br>
+    <code>OVQ sélectionné : {{ovqStructure['nom_ovq']}}</code><br>
+    <code>Niveau sélectionné : {{selectedGeoLevel}} ({{selectedGeoCode}})</code>
 
-    <div v-for="i in indicateurs" :key="i['id_indicateur_fr']">
+    <div class="indicateur_container" v-for="i in indicateurs" :key="i['id_indicateur_fr']">
       
       <h2 class="rf-h3">{{i["nom"]}}</h2>
+
+      <div class="geobox_container">
+        <span class="rf-text">Les résultats pour <b>{{geoLevelLabel}}</b></span>
+      </div>
 
       <div class="databox_container">
         
         <div class="box" data-value="initiale">      
-          <div class="box_header">
+          <div class="box_header rf-text--sm">
             <span>En {{formatDate(i["initial_value_date"],"month")}}</span>
           </div>
-          <span>{{i["initial_value"]}}</span>
+          <span class="rf-text--lead">{{i["initial_value"]}}</span>
+          <span class="rf-text"> {{i["unit"]}}</span>
         </div>
 
         <div class="box" data-value="latest">
-          <div class="box_header">
+          <div class="box_header rf-text--sm">
             <span>En {{formatDate(i["latest_value_date"],"month")}}</span>
           </div>
-          <span>{{i["latest_value"]}}</span>
+          <span class="rf-text--lg">{{i["latest_value"]}}</span>
+          <span class="rf-text"> {{i["unit"]}}</span>
           
         </div>
 
         <div class="box" data-value="target">
-          <div class="box_header">   
+          <div class="box_header rf-text--sm">   
             <span>Cible à atteindre en {{formatDate(i["target_date"],"year")}}</span>
           </div>
-          <span>{{i["target"]}}</span>
-          <span>{{i["target_percentage"]}}%</span>
+          <span class="rf-text--lg">{{i["target"]}}</span>
+          <span class="rf-text"> {{i["unit"]}}</span>
+          <div class="progress_bar">
+            <span class="rf-text--xs">{{i["target_percentage"]}}%</span>
+            <div class="progress_bar_inner" :style="getProgressBarWidth(i['target_percentage'])"></div>
+          </div>
           
         </div>
-
       </div>
-      
-
-
     </div>
   </div>
 </template>
@@ -62,6 +70,17 @@ export default {
     selectedGeoCode () {
       return store.state.user.selectedGeoCode
     },
+    geoLevelLabel (){
+      let label
+      if(this.selectedGeoLevel=="national"){
+        label = "la France entière"
+      }else if(this.selectedGeoLevel=="regional"){
+        label = "la région "+this.selectedGeoCode
+      }else{
+        label = "le département "+this.selectedGeoCode
+      }
+      return label
+    }
   },
   methods: {
     async getOvqData(){
@@ -97,6 +116,7 @@ export default {
       this.ovqStructure["indicateurs"].forEach(function(indic){
         self.indicateurs[indic["id_indicateur_fr"]] = {}
         self.indicateurs[indic["id_indicateur_fr"]]["nom"] = indic["nom_indicateur"]
+        self.indicateurs[indic["id_indicateur_fr"]]["unit"] = indic["odm_kpi_unit"]
       })
 
       // get data at the selected geo level for every ovq
@@ -127,9 +147,6 @@ export default {
          self.indicateurs[indicateurID][prop] = value  
         }
       })
-
-      console.log(this.indicateurs)
-
     },
 
     formatDate(date,level){
@@ -141,9 +158,14 @@ export default {
         dateOptions = {  year: 'numeric'}
       }
       return newDate.toLocaleDateString('fr-FR',dateOptions)
+    },
+
+    getProgressBarWidth(value){
+      return "width:"+value+"%";
     }
 
   },
+
   beforeMount() {
     this.getOvqData()
   }
@@ -158,17 +180,56 @@ export default {
   /* import DSE stylesheet, to delete if parent has access */
   @import "../../css/all.min.css";
 
+  .indicateur_container{
+    margin-bottom: 30px;
+  }
+
+  h2{
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+
+  .geobox_container{
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
+    height: 35px;
+    background-color: #f5f5f5;
+    border-radius: 35px;
+    margin-bottom: 15px;
+    padding-left: 20px;
+    padding-top: 5px;
+  }
+
   .databox_container{
     width: 100%;
     max-width: 700px;
     display: flex;
     justify-content: space-between;
-    span{
-      display: block;
-    }
     .box{
       display: block;
-      width: 32%;
+      width: 30%;
+      padding-left: 20px;
+      padding-bottom: 15px;
+      .box_header{
+        margin-bottom: 20px;
+      }
+      .progress_bar{
+        width: 80%;
+        height: 20px;
+        background-color:#bbbee1;
+        position: relative;
+        margin-top: 20px;
+        .progress_bar_inner{
+          background-color: #3949ab;
+          height: 100%;
+        }
+        span{
+          color:white;
+          position:absolute;
+          margin-left:10px;
+        }
+      }
       &[data-value="initiale"]{
         background-color: rgb(255, 249, 248);    
         .box_header{

@@ -6,7 +6,7 @@
 
     <div class="indicateur_container" v-for="i in indicateurs" :key="i['id_indicateur_fr']">
       
-      <h2 class="rf-h3">{{i["nom"]}}</h2>
+      <h4 class="rf-h4">{{i["nom"]}}</h4>
 
       <div class="geobox_container">
         <span class="rf-text">Les résultats pour <b>{{geoLevelLabel}}</b></span>
@@ -184,7 +184,7 @@ export default {
     margin-bottom: 30px;
   }
 
-  h2{
+  h4{
     margin-left: 20px;
     margin-bottom: 10px;
   }

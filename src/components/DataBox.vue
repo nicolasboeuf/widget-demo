@@ -1,9 +1,6 @@
 <template>
   <div class="databox">
-    <code><b>logs</b></code><br>
-    <code>OVQ sélectionné : {{ovqStructure['nom_ovq']}}</code><br>
-    <code>Niveau sélectionné : {{selectedGeoLevel}} ({{selectedGeoCode}})</code>
-
+  
     <div class="indicateur_container" v-for="i in indicateurs" :key="i['id_indicateur_fr']">
       
       <h4 class="rf-h4">{{i["nom"]}}</h4>
@@ -45,6 +42,9 @@
         </div>
       </div>
     </div>
+    <code><b>logs</b></code><br>
+    <code>OVQ sélectionné : {{ovqStructure['nom_ovq']}}</code><br>
+    <code>Niveau sélectionné : {{selectedGeoLevel}} ({{selectedGeoCode}})</code>
   </div>
 </template>
 
@@ -84,8 +84,8 @@ export default {
   },
   methods: {
     async getOvqData(){
+      
       var self = this
-
       // request all data \\
       // this whole block should be executed globally, in a middleware or something \\
 
@@ -119,22 +119,33 @@ export default {
         self.indicateurs[indic["id_indicateur_fr"]]["unit"] = indic["odm_kpi_unit"]
       })
 
+      this.updateOvqData()
+
+    },
+
+    updateOvqData(){
+      
+      var self = this
+
       // get data at the selected geo level for every ovq
       let ovqObj
+      let regionalData = store.state.territoireData.regional
+      let departementalData = store.state.territoireData.departemental
+
       switch(this.selectedGeoLevel){
         case "national":
-          ovqObj = store.state.territoireData.national[0]["ovq"]
+          ovqObj = store.state.territoireData.national[0]
           break
-        case "regional":    
-          ovqObj = store.state.territoireData.regional[this.selectedGeoCode-1]["ovq"]
+        case "regional":
+          ovqObj = regionalData.find(regionalData => regionalData['reg'] == this.selectedGeoCode)
           break
         case "departemental":
-          ovqObj = store.state.territoireData.departemental[this.selectedGeoCode-1]["ovq"]
+          ovqObj = departementalData.find(departementalData => departementalData['dep'] == this.selectedGeoCode)
           break
       }
 
       // get data for selected geo level of selected ovq
-      this.ovqDataset = ovqObj.find(ovqDataset => ovqDataset['id_ovq'] == this.ovqid);
+      this.ovqDataset = ovqObj["ovq"].find(ovqDataset => ovqDataset['id_ovq'] == this.ovqid);
 
       // get data for indicateurs of selected ovq
       let indicateursJSON = this.ovqDataset["indicateurs"]
@@ -146,7 +157,8 @@ export default {
         for (const [prop, value] of Object.entries(dataIndicateur[0])) {
          self.indicateurs[indicateurID][prop] = value  
         }
-      })
+      }) 
+
     },
 
     formatDate(date,level){
@@ -168,6 +180,12 @@ export default {
 
   beforeMount() {
     this.getOvqData()
+  },
+
+  watch:{
+    selectedGeoCode:function(){
+      this.updateOvqData()
+    }
   }
 
 

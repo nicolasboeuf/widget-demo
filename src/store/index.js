@@ -26,6 +26,10 @@ export default new Vuex.Store({
     },
     setTerritoireData (state,payload) {
       state.territoireData[payload.level] = payload.data
+    },
+    setUserChoices (state,payload){
+      state.user.selectedGeoLevel = payload.level
+      state.user.selectedGeoCode = payload.code
     }
   }
 })

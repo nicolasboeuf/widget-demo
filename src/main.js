@@ -5,6 +5,7 @@ import HelloWorld from './components/HelloWorld'
 import GoodBye from './components/GoodBye'
 import Map from './components/Map'
 import DataBox from './components/DataBox'
+import GeoLists from './components/GeoLists'
 
 Vue.config.productionTip = false
 
@@ -20,3 +21,4 @@ Vue.customElement('hello-world', HelloWorld)
 Vue.customElement('good-bye', GoodBye)
 Vue.customElement('da-map', Map)
 Vue.customElement('data-box', DataBox)
+Vue.customElement('geo-lists', GeoLists)

@@ -1,9 +1,10 @@
 import Vue from 'vue'
 
 import store from './store'
-import HelloWorld from './components/HelloWorld'
-import GoodBye from './components/GoodBye'
-import Map from './components/Map'
+import { getData } from './import.js'
+Vue.use(getData(store))
+
+//import Map from './components/Map'
 import DataBox from './components/DataBox'
 import GeoLists from './components/GeoLists'
 
@@ -13,12 +14,6 @@ import vueCustomElement from 'vue-custom-element'
 
 Vue.use(vueCustomElement)
 
-// do we need this since we're using a singleton in each component?
-HelloWorld.store = store
-GoodBye.store = store
-
-Vue.customElement('hello-world', HelloWorld)
-Vue.customElement('good-bye', GoodBye)
-Vue.customElement('da-map', Map)
+//Vue.customElement('da-map', Map)
 Vue.customElement('data-box', DataBox)
 Vue.customElement('geo-lists', GeoLists)

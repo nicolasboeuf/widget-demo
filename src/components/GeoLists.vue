@@ -40,23 +40,14 @@ export default {
     
   },
   computed: {
-
+    dataImport() {
+      return store.state.endImport
+    },
   },
   methods: {
 
-    async populateLists(){
+    populateLists(){
       var self = this
-      // request all data \\
-      // this whole block should be executed globally, in a middleware or something \\
-      const regionalDataRequest = await fetch("data/par_territoire/territoire-regional-global-light.json")
-      const regionalData = await regionalDataRequest.json()
-      store.commit("setTerritoireData",{level:"regional",data:regionalData})
-
-      const departementalDataRequest = await fetch("data/par_territoire/territoire-departemental-global-light.json")
-      const departementalData = await departementalDataRequest.json()
-      store.commit("setTerritoireData",{level:"departemental",data:departementalData})
-
-      // requests end here \\
 
       store.state.territoireData["departemental"].forEach(function (level) {
         let depObj = { "label":level["libelle"],"value":level["dep"] }
@@ -78,9 +69,11 @@ export default {
     }
   },
 
-  beforeMount() {
-    this.populateLists()
-  }
+  watch:{
+    dataImport:function(){
+      this.populateLists()
+    }
+  },
 
 }
 </script>
@@ -88,8 +81,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
   
-  /* import DSE stylesheet, to delete if parent has access */
-  @import "../../css/all.min.css";
+  /* overload fonts path, to delete when parent has access */
+  @import "../../css/overload-fonts.css";
 
   select{
     width: 250px;

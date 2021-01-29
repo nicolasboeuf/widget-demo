@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    count: 0,
+    endImport:false,
     user:{
       selectedGeoLevel:"national",
       selectedGeoCode:undefined
@@ -18,8 +18,8 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    increment (state) {
-      state.count++
+    endImport (state,value) {
+      state.endImport = value
     },
     initStructure (state,data) {
       state.structure = data

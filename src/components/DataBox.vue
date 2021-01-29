@@ -64,6 +64,9 @@ export default {
     ovqid: String
   },
   computed: {
+    dataImport() {
+      return store.state.endImport
+    },
     selectedGeoLevel () {
       return store.state.user.selectedGeoLevel
     },
@@ -83,35 +86,13 @@ export default {
     }
   },
   methods: {
-    async getOvqData(){
-      
+    
+    getOvqData(){
       var self = this
-      // request all data \\
-      // this whole block should be executed globally, in a middleware or something \\
-
-      // structure data for each ovq
-      const dataRequest = await fetch("data/structure-cible.json")
-      const data = await dataRequest.json()
-      store.commit('initStructure',data)
-
-      // national, regional and departemental data for each ovq
-      const nationalDataRequest = await fetch("data/par_territoire/territoire-national-global-light.json")
-      const nationalData = await nationalDataRequest.json()
-      store.commit("setTerritoireData",{level:"national",data:nationalData})
-
-      const regionalDataRequest = await fetch("data/par_territoire/territoire-regional-global-light.json")
-      const regionalData = await regionalDataRequest.json()
-      store.commit("setTerritoireData",{level:"regional",data:regionalData})
-
-      const departementalDataRequest = await fetch("data/par_territoire/territoire-departemental-global-light.json")
-      const departementalData = await departementalDataRequest.json()
-      store.commit("setTerritoireData",{level:"departemental",data:departementalData})
-
-      // requests end here \\
 
       // get all structure for selected ovq
       this.ovqStructure = store.state.structure.find(ovqStructure => ovqStructure['id_ovq'] == this.ovqid)
-
+      
       // initialize an object for each indicateurs of selected ovq
       this.ovqStructure["indicateurs"].forEach(function(indic){
         self.indicateurs[indic["id_indicateur_fr"]] = {}
@@ -143,7 +124,6 @@ export default {
           ovqObj = departementalData.find(departementalData => departementalData['dep'] == this.selectedGeoCode)
           break
       }
-
       // get data for selected geo level of selected ovq
       this.ovqDataset = ovqObj["ovq"].find(ovqDataset => ovqDataset['id_ovq'] == this.ovqid);
 
@@ -178,16 +158,14 @@ export default {
 
   },
 
-  beforeMount() {
-    this.getOvqData()
-  },
-
   watch:{
+    dataImport:function(){
+      this.getOvqData()
+    },
     selectedGeoCode:function(){
       this.updateOvqData()
     }
-  }
-
+  },
 
 }
 </script>
@@ -195,8 +173,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
   
-  /* import DSE stylesheet, to delete if parent has access */
-  @import "../../css/all.min.css";
+  /* overload fonts path, to delete when parent has access */
+  @import "../../css/overload-fonts.css";
 
   .indicateur_container{
     margin-bottom: 30px;
